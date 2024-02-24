@@ -1,0 +1,12 @@
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+data = load_breast_cancer()
+X = data.data
+y = data.target
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+cv_scores = cross_val_score(clf, X, y, cv=5)
+mean_accuracy = np.mean(cv_scores)
+print("Cross-Validation Scores:", cv_scores)
+print("Mean Accuracy:", mean_accuracy)
