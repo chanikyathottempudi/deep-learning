@@ -1,0 +1,28 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+
+data = fetch_california_housing()
+X = data.data[:, 5]
+y = data.target
+
+X = np.c_[np.ones(X.shape[0]), X]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+def calculate_coefficients(X, y):
+    return np.linalg.inv(X.T @ X) @ X.T @ y
+
+def plot_regression_line(X, y, coefficients):
+    plt.scatter(X[:, 1], y, color='blue', label='Data points')
+    plt.plot(X[:, 1], X @ coefficients, color='red', label='Regression line')
+    plt.xlabel('Number of Rooms')
+    plt.ylabel('Median Value of Owner-Occupied Homes ($1000s)')
+    plt.title('Linear Regression')
+    plt.legend()
+    plt.show()
+
+coefficients = calculate_coefficients(X_train, y_train)
+
+plot_regression_line(X_train, y_train, coefficients)
