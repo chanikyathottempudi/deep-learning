@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+def logistic_regression(X, y, learning_rate, num_iterations):
+    m, n = X.shape
+    weights = np.zeros(n)
+    
+    for _ in range(num_iterations):
+        logits = np.dot(X, weights)
+        predictions = sigmoid(logits)
+        error = predictions - y
+        gradient = np.dot(X.T, error) / m
+        weights -= learning_rate * gradient
+    
+    return weights
+
+np.random.seed(0)
+X = np.random.randn(100, 2)
+y = np.random.randint(0, 2, 100)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+learning_rate = 0.1
+num_iterations = 1000
+weights = logistic_regression(X_train, y_train, learning_rate, num_iterations)
+
+test_logits = np.dot(X_test, weights)
+predicted_probabilities = sigmoid(test_logits)
+predicted_labels = np.round(predicted_probabilities)
+
+accuracy = accuracy_score(y_test, predicted_labels)
+print("Accuracy:", accuracy)
+
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Accent)
+x1_min, x1_max = X[:, 0].min(), X[:, 0].max(),
+x2_min, x2_max = X[:, 1].min(), X[:, 1].max(),
+xx1, xx2 = np.meshgrid(np.linspace(x1_min, x1_max), np.linspace(x2_min, x2_max))
+grid = np.c_[xx1.ravel(), xx2.ravel()]
+probs = sigmoid(np.dot(grid, weights)).reshape(xx1.shape)
+plt.contour(xx1, xx2, probs, [0.5], linewidths=1, colors='red')
+plt.show()
